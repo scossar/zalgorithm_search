@@ -2,21 +2,24 @@ services:
   chroma:
     image: chromadb/chroma:latest
     ports:
-      - "8001:8000"
+      - "127.0.0.1:8001:8000" # bind to localhost only
     volumes:
-      - /home/scossar/projects/python/semantic_search/chroma:/data
+      - chroma-data:/data # named volume
     environment:
       - IS_PERSISTENT=TRUE
+    restart: unless-stopped
 
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000" # bind to localhost only
     depends_on:
       - chroma
-    volumes:
-      - ./app:/code/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # reload on changes to /app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     environment:
       - CHROMA_HOST=chroma
       - CHROMA_PORT=8000
+    restart: unless-stopped
+
+volumes:
+  chroma-data:
