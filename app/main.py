@@ -23,8 +23,6 @@ app.add_middleware(
 
 @app.post("/query", response_class=HTMLResponse)
 async def query_collection(query: Annotated[str, Form()]):
-    print("request received")
-    print(query)
     try:
         chroma_client = await chromadb.AsyncHttpClient(
             host=chroma_host, port=int(chroma_port)
