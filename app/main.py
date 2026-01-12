@@ -95,3 +95,17 @@ async def query_collection(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/fragment/{row_id}", response_class=HTMLResponse)
+async def get_fragment(
+    row_id, db: aiosqlite.Connection = Depends(get_db_connection, scope="function")
+):
+    cursor = await db.execute(
+        f"SELECT html_heading, html_fragment FROM sections WHERE id = {row_id}"
+    )
+    row = await cursor.fetchone()
+    if row:
+        return f"{row[0]}{row[1]}"
+    else:
+        return "<p>Something went wrong</p>"
