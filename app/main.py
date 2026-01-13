@@ -36,7 +36,10 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:1313", "https://zalgorithm.com"],
+    allow_origins=[
+        "http://localhost:1313",
+        "https://zalgorithm.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -106,6 +109,6 @@ async def get_fragment(
     )
     row = await cursor.fetchone()
     if row:
-        return f"{row[0]}{row[1]}"
+        return f"<button onclick='this.parentNode.classList.toggle(\"hidden\");'>x</button>{row[0]}{row[1]}"
     else:
         return "<p>Something went wrong</p>"
