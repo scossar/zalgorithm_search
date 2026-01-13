@@ -86,8 +86,7 @@ async def query_collection(
 
             row_id = metadata.get("db_id", None)
             cursor = await db.execute(
-                "SELECT html_heading, html_fragment FROM sections WHERE id = ?",
-                (row_id,),
+                "SELECT html_heading, html_fragment FROM sections WHERE id = ?", (row_id,)
             )
             row = await cursor.fetchone()
             if row:
