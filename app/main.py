@@ -61,7 +61,7 @@ async def get_chroma_collection() -> AsyncCollection:
     return collection
 
 
-@app.post("/query", response_class=HTMLResponse)
+@app.post("/api/query", response_class=HTMLResponse)
 async def query_collection(
     query: Annotated[str, Form()],
     db: aiosqlite.Connection = Depends(get_db_connection, scope="function"),
@@ -86,7 +86,8 @@ async def query_collection(
 
             row_id = metadata.get("db_id", None)
             cursor = await db.execute(
-                f"SELECT html_heading, html_fragment FROM sections WHERE id = {row_id}"
+                "SELECT html_heading, html_fragment FROM sections WHERE id = ?",
+                (row_id,),
             )
             row = await cursor.fetchone()
             if row:
@@ -100,12 +101,12 @@ async def query_collection(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/fragment/{row_id}", response_class=HTMLResponse)
+@app.get("/api/fragment/{row_id}", response_class=HTMLResponse)
 async def get_fragment(
     row_id, db: aiosqlite.Connection = Depends(get_db_connection, scope="function")
 ):
     cursor = await db.execute(
-        f"SELECT html_heading, html_fragment FROM sections WHERE id = {row_id}"
+        "SELECT html_heading, html_fragment FROM sections WHERE id = ?", (row_id,)
     )
     row = await cursor.fetchone()
     if row:
